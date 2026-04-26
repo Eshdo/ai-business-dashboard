@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-import google.generativeai as genai
+from groq import Groq
 
 # Page config with modern dark theme
 st.set_page_config(
@@ -12,13 +12,13 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Initialize Gemini API client
+# Initialize Groq API client
 try:
-    genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-    model = genai.GenerativeModel('gemini-1.5-pro')
+    client = Groq(api_key=st.secrets["GROQ_API_KEY"])
+    model_ready = True
 except Exception as e:
     st.error(f"❌ API Configuration Error: {e}")
-    model = None
+    model_ready = False
 
 # Custom CSS for modern dark theme with user-friendly colors
 st.markdown("""
@@ -461,22 +461,35 @@ if menu == "📈 Dashboard" and df is not None:
         )
         st.plotly_chart(fig, use_container_width=True)
 
-# AI Insights (Gemini)
+# AI Insights (Groq)
 if menu == "🤖 AI Insights" and df is not None:
-    st.subheader("🤖 AI Insights Engine")
-    st.info("💡 Get intelligent AI-powered analysis of your data using Google Gemini")
+    st.subheader("🤖 AI Insights Engine - Powered by Groq ⚡")
+    st.info("💡 Lightning-fast AI analysis using Groq's latest Llama models")
 
-    if model is None:
-        st.error("❌ Gemini API is not configured. Please add GEMINI_API_KEY to your Streamlit secrets.")
-        st.write("**How to fix:**")
-        st.write("1. Create a free API key at: https://makersuite.google.com/app/apikey")
-        st.write("2. Add it to your Streamlit secrets (if using Streamlit Cloud):")
-        st.code("GEMINI_API_KEY = 'your-api-key-here'")
-        st.write("3. Or add it to `.streamlit/secrets.toml` (local development):")
-        st.code("[GEMINI_API_KEY]\nGEMINI_API_KEY = 'your-api-key-here'")
+    if not model_ready:
+        st.error("❌ Groq API is not configured. Please add GROQ_API_KEY to your Streamlit secrets.")
+        st.write("**How to fix (3 easy steps):**")
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            st.subheader("🌐 Streamlit Cloud")
+            st.write("1. Go to **Manage app** (bottom right)")
+            st.write("2. Click **Secrets**")
+            st.write("3. Add this:")
+            st.code("GROQ_API_KEY = 'your-key-here'")
+        
+        with col2:
+            st.subheader("💻 Local Development")
+            st.write("1. Create `.streamlit/secrets.toml`")
+            st.write("2. Add this:")
+            st.code("GROQ_API_KEY = 'your-key-here'")
+            st.write("3. Run: `streamlit run app.py`")
+        
+        st.write("**Get Free API Key (25 req/min):**")
+        st.write("👉 https://console.groq.com")
     else:
-        if st.button("🚀 Generate Insights", use_container_width=True):
-            with st.spinner("🔍 Analyzing your data..."):
+        if st.button("🚀 Generate AI Insights", use_container_width=True):
+            with st.spinner("⚡ Groq is analyzing your data (lightning fast)..."):
                 try:
                     data_summary = df.describe().to_string()
                     
@@ -526,7 +539,11 @@ Please provide a detailed analysis with these sections:
 
 Please format with clear headings and bullet points for easy reading."""
 
-                    response = model.generate_content(prompt)
+                    response = client.chat.completions.create(
+                        model="llama-3.1-8b-instant",
+                        messages=[{"role": "user", "content": prompt}],
+                        max_tokens=2048
+                    )
                     
                     st.success("✅ Analysis Complete!")
                     
@@ -544,16 +561,16 @@ Please format with clear headings and bullet points for easy reading."""
                     """, unsafe_allow_html=True)
                     
                     st.markdown('<div class="analysis-container">', unsafe_allow_html=True)
-                    st.markdown(response.text)
+                    st.markdown(response.choices[0].message.content)
                     st.markdown('</div>', unsafe_allow_html=True)
                     
                 except Exception as e:
-                    st.error(f"❌ Error generating insights: {str(e)}")
+                    st.error(f"❌ Error: {str(e)}")
                     st.info("**Troubleshooting:**")
-                    st.write("- Verify your API key is correct")
-                    st.write("- Check if your quota is exceeded")
-                    st.write("- Try with a smaller dataset")
-                    st.write("- Visit: https://makersuite.google.com/app/apikey to verify your key")
+                    st.write("- ✓ API key is correct?")
+                    st.write("- ✓ Rate limit (25 req/min) exceeded?")
+                    st.write("- ✓ Internet connection stable?")
+                    st.write("- ✓ Try with smaller dataset?")
 
 # If no data
 if df is None:
