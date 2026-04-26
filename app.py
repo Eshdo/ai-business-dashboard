@@ -4,7 +4,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import google.generativeai as genai
 
-# Page config with dark theme
+# Page config with modern dark theme
 st.set_page_config(
     page_title="AI Business Dashboard",
     page_icon="📊",
@@ -13,10 +13,14 @@ st.set_page_config(
 )
 
 # Initialize Gemini API client
-genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-model = genai.GenerativeModel('gemini-1.5-pro')
+try:
+    genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+    model = genai.GenerativeModel('gemini-1.5-pro')
+except Exception as e:
+    st.error(f"❌ API Configuration Error: {e}")
+    model = None
 
-# Custom CSS for dark theme with colorful UI and improved text colors
+# Custom CSS for modern dark theme with user-friendly colors
 st.markdown("""
 <style>
     * {
@@ -24,208 +28,222 @@ st.markdown("""
     }
     
     body {
-        background-color: #0a0e27;
-        color: #e0e0e0;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        color: #f1f5f9;
     }
     
     .stApp {
-        background-color: #0a0e27;
-        color: #e0e0e0;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
     }
     
-    /* Text color styling */
-    p, span, label, div {
-        color: #e0e0e0 !important;
-    }
-    
-    .metric-card {
-        background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+    /* Main container */
+    .stMainBlockContainer {
         padding: 20px;
-        border-radius: 12px;
-        border-left: 5px solid #60a5fa;
-        box-shadow: 0px 8px 20px rgba(0,0,0,0.3);
-        text-align: center;
-        color: #e0e0e0;
     }
     
-    .stMetric {
-        background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-        padding: 15px;
-        border-radius: 10px;
-        border-left: 4px solid #a78bfa;
-        box-shadow: 0px 4px 15px rgba(0,0,0,0.2);
-    }
-    
-    .stMetric [data-testid="metricDeltaContainer"] {
-        color: #60a5fa !important;
-    }
-    
-    .stMetric > div:first-child > div:first-child {
-        color: #a78bfa !important;
-        font-weight: bold;
-        font-size: 14px;
-    }
-    
-    .stMetric > div:first-child > div:last-child {
-        color: #60a5fa !important;
-        font-size: 24px;
-        font-weight: bold;
-    }
-    
-    .stSidebar {
-        background-color: #111827;
-        border-right: 2px solid #4f46e5;
-    }
-    
-    .stSidebar [data-testid="stSidebarNav"] {
-        background-color: #1f2937;
-    }
-    
-    .stSidebar label, .stSidebar p, .stSidebar span {
-        color: #e0e0e0 !important;
-    }
-    
-    /* Colorful gradient background for headers */
-    h1, h2, h3, h4, h5, h6 {
-        background: linear-gradient(90deg, #60a5fa, #a78bfa, #f472b6);
+    /* Headers with vibrant gradients */
+    h1 {
+        background: linear-gradient(90deg, #06b6d4, #3b82f6, #8b5cf6);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        font-weight: bold;
+        font-weight: 900;
+        font-size: 2.5em !important;
     }
     
-    .stCaption {
-        color: #a78bfa !important;
-        font-style: italic;
+    h2, h3 {
+        background: linear-gradient(90deg, #10b981, #06b6d4, #3b82f6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 800;
     }
     
+    /* Sidebar styling */
+    .stSidebar {
+        background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+        border-right: 2px solid #06b6d4;
+    }
+    
+    .stSidebar [data-testid="stSidebarNav"] {
+        background: transparent;
+    }
+    
+    /* Radio buttons and selection */
+    [data-testid="stRadio"] {
+        background-color: #1e293b;
+        padding: 15px;
+        border-radius: 12px;
+        border-left: 4px solid #06b6d4;
+    }
+    
+    /* Metrics with beautiful colors */
+    .stMetric {
+        background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+        padding: 20px;
+        border-radius: 12px;
+        border-left: 4px solid #06b6d4;
+        box-shadow: 0px 8px 20px rgba(6, 182, 212, 0.2);
+    }
+    
+    .stMetric label {
+        color: #93c5fd !important;
+        font-weight: 600;
+    }
+    
+    .stMetric [data-testid="stMetricValue"] {
+        color: #38bdf8 !important;
+        font-size: 24px !important;
+    }
+    
+    /* Buttons with gradient */
     .stButton > button {
-        background: linear-gradient(90deg, #4f46e5, #7c3aed);
-        color: white;
+        background: linear-gradient(90deg, #06b6d4, #0891b2);
+        color: #ffffff !important;
         border: none;
-        border-radius: 8px;
-        padding: 10px 20px;
-        font-weight: bold;
-        box-shadow: 0px 4px 15px rgba(79, 70, 229, 0.4);
+        border-radius: 10px;
+        padding: 12px 28px;
+        font-weight: 700;
+        font-size: 16px;
+        box-shadow: 0px 8px 20px rgba(6, 182, 212, 0.4);
         transition: all 0.3s ease;
+        width: 100%;
     }
     
     .stButton > button:hover {
-        background: linear-gradient(90deg, #6d28d9, #a855f7);
-        box-shadow: 0px 6px 20px rgba(168, 85, 247, 0.6);
+        background: linear-gradient(90deg, #0891b2, #0d9488);
+        box-shadow: 0px 12px 30px rgba(6, 182, 212, 0.6);
+        transform: translateY(-2px);
     }
     
-    .stSelectbox, .stMultiSelect, .stFileUploader, .stTextInput {
-        background-color: #1f2937;
-        border: 2px solid #4f46e5;
-        border-radius: 8px;
+    /* Selectbox and input fields */
+    .stSelectbox, .stMultiSelect, .stFileUploader {
+        background-color: #1e293b !important;
     }
     
-    .stSelectbox > div > div, .stMultiSelect > div > div {
-        color: #e0e0e0 !important;
-        background-color: #111827;
+    .stSelectbox [data-baseweb="select"] {
+        background: #1e293b !important;
+        border: 2px solid #06b6d4 !important;
+        border-radius: 8px !important;
     }
     
+    .stMultiSelect [data-baseweb="select"] {
+        background: #1e293b !important;
+        border: 2px solid #10b981 !important;
+        border-radius: 8px !important;
+    }
+    
+    /* Tabs */
     .stTabs [data-baseweb="tab-list"] {
-        background-color: #111827;
-        border-bottom: 2px solid #4f46e5;
+        background-color: #0f172a;
+        border-bottom: 2px solid #06b6d4;
     }
     
     .stTabs [data-baseweb="tab"] {
-        background-color: #1f2937;
+        background-color: #1e293b;
         border-radius: 8px 8px 0 0;
+        color: #cbd5e1;
     }
     
     .stTabs [aria-selected="true"] {
-        background-color: #4f46e5;
-        color: white !important;
+        background: linear-gradient(90deg, #06b6d4, #0891b2);
+        color: #ffffff;
     }
     
+    /* Success message */
     .stSuccess {
-        background-color: #064e3b;
+        background: linear-gradient(135deg, #064e3b 0%, #047857 100%);
         border-left: 4px solid #10b981;
         border-radius: 8px;
-        color: #10b981 !important;
+        padding: 15px;
+        color: #d1fae5;
     }
     
-    .stSuccess p, .stSuccess span {
-        color: #10b981 !important;
-        font-weight: bold;
-    }
-    
+    /* Warning message */
     .stWarning {
-        background-color: #78350f;
+        background: linear-gradient(135deg, #78350f 0%, #b45309 100%);
         border-left: 4px solid #f59e0b;
         border-radius: 8px;
-        color: #f59e0b !important;
+        padding: 15px;
+        color: #fef3c7;
     }
     
-    .stWarning p, .stWarning span {
-        color: #f59e0b !important;
-        font-weight: bold;
-    }
-    
+    /* Error message */
     .stError {
-        background-color: #7f1d1d;
+        background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 100%);
         border-left: 4px solid #ef4444;
         border-radius: 8px;
-        color: #ef4444 !important;
+        padding: 15px;
+        color: #fee2e2;
     }
     
-    .stError p, .stError span {
-        color: #ef4444 !important;
-        font-weight: bold;
-    }
-    
+    /* Info message */
     .stInfo {
-        background-color: #0c4a6e;
-        border-left: 4px solid #0ea5e9;
+        background: linear-gradient(135deg, #0c4a6e 0%, #0369a1 100%);
+        border-left: 4px solid #06b6d4;
         border-radius: 8px;
-        color: #0ea5e9 !important;
+        padding: 15px;
+        color: #cffafe;
     }
     
-    .stInfo p, .stInfo span {
-        color: #0ea5e9 !important;
-        font-weight: bold;
-    }
-    
+    /* Divider */
     .stDivider {
-        border-color: #4f46e5;
-        opacity: 0.5;
+        border-color: #06b6d4;
+        opacity: 0.6;
+    }
+    
+    /* Captions */
+    .stCaption {
+        color: #06b6d4 !important;
+        font-weight: 500;
+    }
+    
+    /* Text styling */
+    p {
+        color: #e2e8f0 !important;
     }
     
     /* Scrollbar styling */
     ::-webkit-scrollbar {
-        width: 10px;
+        width: 12px;
+        height: 12px;
     }
     
     ::-webkit-scrollbar-track {
-        background: #111827;
+        background: #0f172a;
     }
     
     ::-webkit-scrollbar-thumb {
-        background: #4f46e5;
-        border-radius: 5px;
+        background: linear-gradient(180deg, #06b6d4, #3b82f6);
+        border-radius: 6px;
     }
     
     ::-webkit-scrollbar-thumb:hover {
-        background: #6d28d9;
+        background: linear-gradient(180deg, #0891b2, #2563eb);
     }
     
-    /* Markdown text colors */
-    .stMarkdown, .stMarkdown > p {
-        color: #e0e0e0 !important;
+    /* Expander */
+    .stExpander {
+        background-color: #1e293b;
+        border: 1px solid #06b6d4;
+        border-radius: 8px;
     }
     
-    /* Input field text colors */
-    input, textarea, select {
-        background-color: #1f2937 !important;
-        color: #e0e0e0 !important;
-        border: 1px solid #4f46e5 !important;
+    /* DataFrames */
+    .stDataFrame {
+        background-color: #0f172a;
     }
     
-    input::placeholder, textarea::placeholder {
-        color: #9ca3af !important;
+    .stDataFrame thead {
+        background-color: #1e293b;
+    }
+    
+    .stDataFrame tbody tr {
+        border-bottom: 1px solid #334155;
+    }
+    
+    .stDataFrame tbody tr:hover {
+        background-color: #1e293b;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -233,25 +251,38 @@ st.markdown("""
 # Sidebar
 st.sidebar.title("📊 Dashboard")
 st.sidebar.markdown("---")
-menu = st.sidebar.radio("Navigation", ["📤 Upload Data", "📈 Dashboard", "🤖 AI Insights"])
+menu = st.sidebar.radio(
+    "Navigation",
+    ["📤 Upload Data", "📈 Dashboard", "🤖 AI Insights"],
+    help="Select a section to navigate"
+)
 
 # Main title
 st.title("📊 AI Business Dashboard")
-st.caption("✨ Turn your data into actionable insights using AI-powered analysis")
+st.caption("✨ Transform your data into powerful business insights using AI")
 
 # Upload section
 if menu == "📤 Upload Data":
     st.subheader("📤 Upload Your Data")
-    col1, col2 = st.columns([2, 1])
+    col1, col2 = st.columns([3, 1])
     
     with col1:
-        file = st.file_uploader("Upload your CSV file", type=["csv"])
+        file = st.file_uploader(
+            "📁 Upload your CSV file",
+            type=["csv"],
+            help="Select a CSV file to analyze"
+        )
     
     if file:
-        df = pd.read_csv(file)
-        df.to_csv("data.csv", index=False)
-        st.success("✅ File uploaded successfully!")
-        st.info(f"📊 Dataset has {len(df)} rows and {len(df.columns)} columns")
+        try:
+            df = pd.read_csv(file)
+            df.to_csv("data.csv", index=False)
+            st.success("✅ File uploaded successfully!")
+            st.info(f"📊 Dataset: {len(df)} rows × {len(df.columns)} columns")
+            st.subheader("📋 Data Preview")
+            st.dataframe(df.head(10), use_container_width=True)
+        except Exception as e:
+            st.error(f"❌ Error uploading file: {e}")
 else:
     file = None
 
@@ -274,7 +305,7 @@ if menu == "📈 Dashboard" and df is not None:
     
     for col in cat_cols:
         options = df[col].unique()
-        selected = st.sidebar.multiselect(f"{col}", options)
+        selected = st.sidebar.multiselect(f"Filter {col}", options)
         
         if selected:
             df_filtered = df_filtered[df_filtered[col].isin(selected)]
@@ -284,80 +315,121 @@ if menu == "📈 Dashboard" and df is not None:
     num_cols = df_filtered.select_dtypes(include='number').columns
 
     if len(num_cols) > 0:
-        selected_kpi = st.selectbox("Select KPI Column", num_cols)
+        selected_kpi = st.selectbox("📈 Select KPI Column", num_cols)
 
         total = df_filtered[selected_kpi].sum()
         avg = df_filtered[selected_kpi].mean()
         max_val = df_filtered[selected_kpi].max()
         min_val = df_filtered[selected_kpi].min()
 
-        col1, col2, col3, col4 = st.columns(4)
+        col1, col2, col3, col4 = st.columns(4, gap="large")
 
         with col1:
-            st.metric("💰 Total", f"{total:.2f}", delta=None)
+            st.metric("💰 Total", f"{total:,.2f}")
         with col2:
-            st.metric("📈 Average", f"{avg:.2f}", delta=None)
+            st.metric("📈 Average", f"{avg:,.2f}")
         with col3:
-            st.metric("⬆️ Max", f"{max_val:.2f}", delta=None)
+            st.metric("⬆️ Maximum", f"{max_val:,.2f}")
         with col4:
-            st.metric("⬇️ Min", f"{min_val:.2f}", delta=None)
+            st.metric("⬇️ Minimum", f"{min_val:,.2f}")
 
     st.divider()
 
     # Charts
     st.subheader("📈 Visual Analysis")
 
-    chart_type = st.selectbox("Choose Chart Type", ["Bar", "Line", "Pie", "Scatter"])
+    chart_type = st.selectbox(
+        "📊 Choose Chart Type",
+        ["Bar Chart", "Line Chart", "Pie Chart", "Scatter Plot", "Area Chart"]
+    )
 
-    if chart_type == "Bar" and len(cat_cols) > 0 and len(num_cols) > 0:
+    if chart_type == "Bar Chart" and len(cat_cols) > 0 and len(num_cols) > 0:
         x_col = st.selectbox("X-axis", cat_cols, key="bar_x")
         y_col = st.selectbox("Y-axis", num_cols, key="bar_y")
 
-        fig = px.bar(df_filtered, x=x_col, y=y_col,
-                    color_discrete_sequence=['#4f46e5'],
-                    template="plotly_dark")
-        fig.update_traces(marker_color='#a78bfa')
+        fig = px.bar(
+            df_filtered, 
+            x=x_col, 
+            y=y_col,
+            color_discrete_sequence=['#06b6d4'],
+            template="plotly_dark"
+        )
         fig.update_layout(
-            font=dict(color='#e0e0e0', size=12),
-            xaxis=dict(title_font=dict(color='#60a5fa'), tickfont=dict(color='#a78bfa')),
-            yaxis=dict(title_font=dict(color='#60a5fa'), tickfont=dict(color='#a78bfa'))
+            plot_bgcolor='#0f172a',
+            paper_bgcolor='#0f172a',
+            font=dict(color='#e2e8f0', size=12),
+            hovermode='x unified'
         )
         st.plotly_chart(fig, use_container_width=True)
 
-    elif chart_type == "Line" and len(num_cols) > 0:
+    elif chart_type == "Line Chart" and len(num_cols) > 0:
         y_col = st.selectbox("Y-axis", num_cols, key="line_y")
 
-        fig = px.line(df_filtered, y=y_col,
-                     color_discrete_sequence=['#60a5fa'],
-                     template="plotly_dark")
+        fig = px.line(
+            df_filtered, 
+            y=y_col,
+            color_discrete_sequence=['#10b981'],
+            template="plotly_dark"
+        )
         fig.update_layout(
-            font=dict(color='#e0e0e0', size=12),
-            xaxis=dict(title_font=dict(color='#60a5fa'), tickfont=dict(color='#a78bfa')),
-            yaxis=dict(title_font=dict(color='#60a5fa'), tickfont=dict(color='#a78bfa'))
+            plot_bgcolor='#0f172a',
+            paper_bgcolor='#0f172a',
+            font=dict(color='#e2e8f0', size=12),
+            hovermode='x unified'
         )
         st.plotly_chart(fig, use_container_width=True)
 
-    elif chart_type == "Pie" and len(cat_cols) > 0 and len(num_cols) > 0:
+    elif chart_type == "Pie Chart" and len(cat_cols) > 0 and len(num_cols) > 0:
         names = st.selectbox("Category", cat_cols, key="pie_names")
         values = st.selectbox("Values", num_cols, key="pie_values")
 
-        fig = px.pie(df_filtered, names=names, values=values,
-                    color_discrete_sequence=['#4f46e5', '#7c3aed', '#a855f7', '#d946ef', '#f472b6', '#60a5fa', '#a78bfa'],
-                    template="plotly_dark")
-        fig.update_layout(font=dict(color='#e0e0e0', size=12))
+        fig = px.pie(
+            df_filtered,
+            names=names,
+            values=values,
+            color_discrete_sequence=['#06b6d4', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444', '#ec4899', '#3b82f6'],
+            template="plotly_dark"
+        )
+        fig.update_layout(
+            plot_bgcolor='#0f172a',
+            paper_bgcolor='#0f172a',
+            font=dict(color='#e2e8f0', size=12)
+        )
         st.plotly_chart(fig, use_container_width=True)
 
-    elif chart_type == "Scatter" and len(num_cols) > 1:
+    elif chart_type == "Scatter Plot" and len(num_cols) > 1:
         x_col = st.selectbox("X-axis", num_cols, key="scatter_x")
         y_col = st.selectbox("Y-axis", num_cols, key="scatter_y")
 
-        fig = px.scatter(df_filtered, x=x_col, y=y_col,
-                        color_discrete_sequence=['#f472b6'],
-                        template="plotly_dark")
+        fig = px.scatter(
+            df_filtered,
+            x=x_col,
+            y=y_col,
+            color_discrete_sequence=['#8b5cf6'],
+            template="plotly_dark"
+        )
         fig.update_layout(
-            font=dict(color='#e0e0e0', size=12),
-            xaxis=dict(title_font=dict(color='#60a5fa'), tickfont=dict(color='#a78bfa')),
-            yaxis=dict(title_font=dict(color='#60a5fa'), tickfont=dict(color='#a78bfa'))
+            plot_bgcolor='#0f172a',
+            paper_bgcolor='#0f172a',
+            font=dict(color='#e2e8f0', size=12),
+            hovermode='closest'
+        )
+        st.plotly_chart(fig, use_container_width=True)
+
+    elif chart_type == "Area Chart" and len(num_cols) > 0:
+        y_col = st.selectbox("Y-axis", num_cols, key="area_y")
+
+        fig = px.area(
+            df_filtered,
+            y=y_col,
+            color_discrete_sequence=['#f59e0b'],
+            template="plotly_dark"
+        )
+        fig.update_layout(
+            plot_bgcolor='#0f172a',
+            paper_bgcolor='#0f172a',
+            font=dict(color='#e2e8f0', size=12),
+            hovermode='x unified'
         )
         st.plotly_chart(fig, use_container_width=True)
 
@@ -372,67 +444,118 @@ if menu == "📈 Dashboard" and df is not None:
 
         top_data = df_filtered.groupby(cat)[num].sum().sort_values(ascending=False).head(5)
 
-        fig = px.bar(x=top_data.index, y=top_data.values,
-                    labels={"x": cat, "y": num},
-                    color_discrete_sequence=['#10b981'],
-                    template="plotly_dark")
-        fig.update_xaxes(title_text=cat, title_font=dict(color='#60a5fa'), tickfont=dict(color='#a78bfa'))
-        fig.update_yaxes(title_text=num, title_font=dict(color='#60a5fa'), tickfont=dict(color='#a78bfa'))
-        fig.update_layout(font=dict(color='#e0e0e0', size=12))
+        fig = px.bar(
+            x=top_data.index,
+            y=top_data.values,
+            labels={"x": cat, "y": num},
+            color_discrete_sequence=['#10b981'],
+            template="plotly_dark"
+        )
+        fig.update_layout(
+            plot_bgcolor='#0f172a',
+            paper_bgcolor='#0f172a',
+            font=dict(color='#e2e8f0', size=12),
+            xaxis_title=cat,
+            yaxis_title=num,
+            hovermode='x unified'
+        )
         st.plotly_chart(fig, use_container_width=True)
 
 # AI Insights (Gemini)
 if menu == "🤖 AI Insights" and df is not None:
     st.subheader("🤖 AI Insights Engine")
-    st.info("💡 Get intelligent analysis of your data using Google Gemini AI")
+    st.info("💡 Get intelligent AI-powered analysis of your data using Google Gemini")
 
-    if st.button("🚀 Generate Insights", use_container_width=True):
-        with st.spinner("🔍 Analyzing data..."):
-            try:
-                data_summary = df.describe().to_string()
-                data_types = df.dtypes.to_string()
-                
-                prompt = f"""You are a professional business analyst with expertise in data analysis and strategic insights.
+    if model is None:
+        st.error("❌ Gemini API is not configured. Please add GEMINI_API_KEY to your Streamlit secrets.")
+        st.write("**How to fix:**")
+        st.write("1. Create a free API key at: https://makersuite.google.com/app/apikey")
+        st.write("2. Add it to your Streamlit secrets (if using Streamlit Cloud):")
+        st.code("GEMINI_API_KEY = 'your-api-key-here'")
+        st.write("3. Or add it to `.streamlit/secrets.toml` (local development):")
+        st.code("[GEMINI_API_KEY]\nGEMINI_API_KEY = 'your-api-key-here'")
+    else:
+        if st.button("🚀 Generate Insights", use_container_width=True):
+            with st.spinner("🔍 Analyzing your data..."):
+                try:
+                    data_summary = df.describe().to_string()
+                    
+                    prompt = f"""You are a professional business analyst with expertise in data analysis and strategic insights.
 
-Analyze this dataset and provide a comprehensive business analysis:
+Analyze this dataset and provide comprehensive business intelligence:
 
-DATA SUMMARY:
+DATASET STATISTICS:
 {data_summary}
 
-DATA TYPES:
-{data_types}
-
-DATASET INFO:
-- Total rows: {len(df)}
-- Total columns: {len(df.columns)}
-- Columns: {', '.join(df.columns)}
+DATASET INFORMATION:
+- Total Records: {len(df):,}
+- Total Columns: {len(df.columns)}
+- Data Columns: {', '.join(df.columns)}
+- Data Types: {dict(df.dtypes)}
 
 Please provide a detailed analysis with these sections:
 
-1. **Key Trends**: Identify the main patterns and trends in the data
-2. **Business Insights**: What do these metrics tell us about business performance?
-3. **Risks**: Potential risks or concerns based on the data
-4. **Opportunities**: Growth opportunities and areas for improvement
-5. **Recommendations**: Specific, actionable recommendations for business improvement
+1. **📊 Executive Summary**
+   - What does this data represent?
+   - Overall health and status of the data
 
-Format your response with clear headings and bullet points for easy reading."""
+2. **📈 Key Trends & Patterns**
+   - Identify main trends and patterns
+   - Growth or decline indicators
+   - Seasonal patterns (if applicable)
 
-                response = model.generate_content(prompt)
-                
-                st.success("✅ Analysis Complete!")
-                st.markdown(response.text)
-                
-            except Exception as e:
-                st.error(f"❌ Error generating insights: {str(e)}")
-                st.info("💡 **Troubleshooting Tips:**")
-                st.write("""
-                - Ensure your GEMINI_API_KEY is valid in secrets
-                - Check that the API key has the required permissions
-                - Try uploading a larger dataset for better analysis
-                - Make sure all values are within API limits
-                """)
+3. **💡 Business Insights**
+   - Most important findings
+   - What the metrics tell about business performance
+   - Correlations and relationships
+
+4. **⚠️ Risks & Concerns**
+   - Potential risks or red flags
+   - Areas of concern
+   - Issues that need attention
+
+5. **🎯 Opportunities**
+   - Growth opportunities
+   - Areas for improvement
+   - Untapped potential
+
+6. **💼 Recommendations**
+   - Top 3-5 actionable recommendations
+   - Priority order
+   - Expected impact
+
+Please format with clear headings and bullet points for easy reading."""
+
+                    response = model.generate_content(prompt)
+                    
+                    st.success("✅ Analysis Complete!")
+                    
+                    # Display the response in a nice format
+                    st.markdown("""
+                    <style>
+                    .analysis-container {
+                        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+                        padding: 20px;
+                        border-radius: 12px;
+                        border-left: 4px solid #06b6d4;
+                        box-shadow: 0px 8px 20px rgba(6, 182, 212, 0.2);
+                    }
+                    </style>
+                    """, unsafe_allow_html=True)
+                    
+                    st.markdown('<div class="analysis-container">', unsafe_allow_html=True)
+                    st.markdown(response.text)
+                    st.markdown('</div>', unsafe_allow_html=True)
+                    
+                except Exception as e:
+                    st.error(f"❌ Error generating insights: {str(e)}")
+                    st.info("**Troubleshooting:**")
+                    st.write("- Verify your API key is correct")
+                    st.write("- Check if your quota is exceeded")
+                    st.write("- Try with a smaller dataset")
+                    st.write("- Visit: https://makersuite.google.com/app/apikey to verify your key")
 
 # If no data
 if df is None:
-    st.warning("⚠️ Please upload a dataset to get started.")
-    st.info("📝 Go to the '📤 Upload Data' section to upload your CSV file.")
+    st.warning("⚠️ No data loaded. Please upload a dataset to get started.")
+    st.info("📝 Navigate to '📤 Upload Data' section to upload your CSV file.")
