@@ -14,7 +14,7 @@ st.set_page_config(
 
 # Initialize Gemini API client
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-model = genai.GenerativeModel('gemini-pro')
+model = genai.GenerativeModel('gemini-1.5-flash')
 
 # Custom CSS for dark theme with colorful UI
 st.markdown("""
