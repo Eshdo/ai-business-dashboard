@@ -95,7 +95,7 @@ css_content = f"""
     
     /* Main container */
     .stMainBlockContainer {{
-        padding: 20px;
+        padding: 40px 20px 20px 20px;
     }}
     
     /* Headers with vibrant gradients */
@@ -106,6 +106,8 @@ css_content = f"""
         background-clip: text;
         font-weight: 900;
         font-size: 2.5em !important;
+        padding-top: 24px !important;
+        margin-top: 16px !important;
     }}
     
     h2, h3 {{
@@ -114,6 +116,15 @@ css_content = f"""
         -webkit-text-fill-color: transparent;
         background-clip: text;
         font-weight: 800;
+    }}
+    
+    /* Restore emoji natural colours inside gradient headings */
+    h1 span[role="img"], h2 span[role="img"], h3 span[role="img"],
+    h1 .stEmoji, h2 .stEmoji, h3 .stEmoji {{
+        -webkit-text-fill-color: initial !important;
+        background: none !important;
+        background-clip: initial !important;
+        filter: none !important;
     }}
     
     /* Sidebar styling */
@@ -258,9 +269,32 @@ css_content = f"""
         font-weight: 500;
     }}
     
-    /* Text styling */
+    /* Text styling — keep paragraphs white/primary */
     p {{
-        color: {theme['text_secondary']} !important;
+        color: {theme['text_primary']} !important;
+    }}
+    
+    /* File uploader — make button label clearly visible */
+    [data-testid="stFileUploader"] button {{
+        color: #ffffff !important;
+        background: linear-gradient(90deg, {theme['button_bg']}, {theme['button_hover']}) !important;
+        border: none !important;
+        font-weight: 600 !important;
+    }}
+    [data-testid="stFileUploader"] button span {{
+        color: #ffffff !important;
+    }}
+    [data-testid="stFileUploader"] label {{
+        color: {theme['text_primary']} !important;
+    }}
+    [data-testid="stFileUploaderDropzone"] {{
+        border: 2px dashed {theme['accent']} !important;
+        border-radius: 10px !important;
+        background: {theme['container_bg']} !important;
+    }}
+    [data-testid="stFileUploaderDropzone"] span,
+    [data-testid="stFileUploaderDropzone"] p {{
+        color: {theme['text_primary']} !important;
     }}
     
     /* Scrollbar styling */
@@ -326,15 +360,15 @@ css_content = f"""
     }}
     
     .analysis-container p {{
-        color: {theme['text_secondary']} !important;
+        color: {theme['text_primary']} !important;
     }}
     
     .analysis-container ul {{
-        color: {theme['text_secondary']} !important;
+        color: {theme['text_primary']} !important;
     }}
     
     .analysis-container li {{
-        color: {theme['text_secondary']} !important;
+        color: {theme['text_primary']} !important;
     }}
 </style>
 """
@@ -667,14 +701,14 @@ Please format with clear headings and bullet points for easy reading."""
                         margin-bottom: 10px;
                     }}
                     .analysis-container p {{
-                        color: {theme['text_secondary']} !important;
+                        color: {theme['text_primary']} !important;
                         line-height: 1.6;
                     }}
                     .analysis-container ul, .analysis-container ol {{
-                        color: {theme['text_secondary']} !important;
+                        color: {theme['text_primary']} !important;
                     }}
                     .analysis-container li {{
-                        color: {theme['text_secondary']} !important;
+                        color: {theme['text_primary']} !important;
                         margin-bottom: 8px;
                         line-height: 1.5;
                     }}
