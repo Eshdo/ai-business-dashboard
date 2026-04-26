@@ -60,7 +60,7 @@ if menu == "Dashboard" and df is not None:
 
 # Sidebar filters
     st.sidebar.header("🔍 Filters")
-df_filtered = df.copy()
+    df_filtered = df.copy()
 
 cat_cols = df.select_dtypes(include='object').columns
 for col in cat_cols:
