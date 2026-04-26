@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
+import plotly.express as px # pyright: ignore[reportMissingImports]
 from groq import Groq
 
 # Page config
@@ -38,29 +38,28 @@ st.caption("Turn your data into actionable insights using AI")
 # Upload section
 
 if menu == "Upload Data":
-file = st.file_uploader("Upload your CSV file", type=["csv"])
+    file = st.file_uploader("Upload your CSV file", type=["csv"])
 
-```
+
 if file:
     df = pd.read_csv(file)
     df.to_csv("data.csv", index=False)
     st.success("File uploaded successfully!")
-```
+
 
 # Load data
 
 try:
-df = pd.read_csv("data.csv")
+    df = pd.read_csv("data.csv")
 except:
-df = None
+    df = None
 
 # Dashboard
 
 if menu == "Dashboard" and df is not None:
 
-```
 # Sidebar filters
-st.sidebar.header("🔍 Filters")
+    st.sidebar.header("🔍 Filters")
 df_filtered = df.copy()
 
 cat_cols = df.select_dtypes(include='object').columns
@@ -130,14 +129,13 @@ if len(cat_cols) > 0 and len(num_cols) > 0:
 
     fig = px.bar(top_data, x=top_data.index, y=top_data.values)
     st.plotly_chart(fig, use_container_width=True)
-```
+
 
 # AI Insights (Groq)
 
 if menu == "AI Insights" and df is not None:
 
-```
-st.subheader("🤖 AI Insights Engine")
+    st.subheader("🤖 AI Insights Engine")
 
 if st.button("Generate Insights"):
     with st.spinner("Analyzing data..."):
@@ -162,9 +160,9 @@ if st.button("Generate Insights"):
 
         st.success("Analysis Complete!")
         st.write(response.choices[0].message.content)
-```
+
 
 # If no data
 
 if df is None:
-st.warning("Please upload a dataset to get started.")
+    st.warning("Please upload a dataset to get started.")
