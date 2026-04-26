@@ -62,7 +62,7 @@ if menu == "Dashboard" and df is not None:
     st.sidebar.header("🔍 Filters")
     df_filtered = df.copy()
 
-cat_cols = df.select_dtypes(include='object').columns
+    cat_cols = df.select_dtypes(include='object').columns
 for col in cat_cols:
     options = df[col].unique()
     selected = st.sidebar.multiselect(f"{col}", options)
