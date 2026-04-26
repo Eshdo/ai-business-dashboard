@@ -63,9 +63,9 @@ if menu == "Dashboard" and df is not None:
     df_filtered = df.copy()
 
     cat_cols = df.select_dtypes(include='object').columns
-for col in cat_cols:
-    options = df[col].unique()
-    selected = st.sidebar.multiselect(f"{col}", options)
+    for col in cat_cols:
+        options = df[col].unique()
+        selected = st.sidebar.multiselect(f"{col}", options)
 
     if selected:
         df_filtered = df_filtered[df_filtered[col].isin(selected)]
