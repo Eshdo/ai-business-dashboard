@@ -27,44 +27,51 @@ except Exception as e:
 # Define color schemes
 THEMES = {
     "dark": {
-        "bg_gradient": "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
-        "sidebar_bg": "linear-gradient(180deg, #1e293b 0%, #0f172a 100%)",
-        "accent": "#06b6d4",
-        "accent_secondary": "#3b82f6",
-        "accent_tertiary": "#8b5cf6",
-        "text_primary": "#ffffff",
-        "text_secondary": "#e2e8f0",
-        "text_tertiary": "#e3edf8",
+        # Warm charcoal background instead of cold navy
+        "bg_gradient": "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #1f2b3e 100%)",
+        "sidebar_bg": "linear-gradient(180deg, #1f2b3e 0%, #1a1a2e 100%)",
+        # Soft indigo/violet accent — easier on the eyes than harsh cyan
+        "accent": "#7c6af7",
+        "accent_secondary": "#f472b6",
+        "accent_tertiary": "#34d399",
+        "text_primary": "#f0f0f5",
+        "text_secondary": "#c8cfe0",
+        "text_tertiary": "#a8b4c8",
+        # Friendly semantic colours (softer, not neon)
+        "success": "#34d399",
+        "warning": "#fbbf24",
+        "error": "#f87171",
+        "info": "#7c6af7",
+        # Cards use a warm-tinted dark surface
+        "metric_bg": "#2a2550",
+        "button_bg": "#7c6af7",
+        "button_hover": "#6350e8",
+        "container_bg": "#1f2b3e",
+        "scrollbar_primary": "#7c6af7",
+        "scrollbar_hover": "#f472b6"
+    },
+    "light": {
+        # Warm cream/white background instead of cold grey
+        "bg_gradient": "linear-gradient(135deg, #fdf6ff 0%, #f3f0ff 100%)",
+        "sidebar_bg": "linear-gradient(180deg, #ede9fe 0%, #f3f0ff 100%)",
+        # Matching soft indigo for light mode
+        "accent": "#6d56f5",
+        "accent_secondary": "#ec4899",
+        "accent_tertiary": "#10b981",
+        "text_primary": "#1e1b4b",
+        "text_secondary": "#3b3573",
+        "text_tertiary": "#5b5499",
         "success": "#10b981",
         "warning": "#f59e0b",
         "error": "#ef4444",
-        "info": "#06b6d4",
-        "metric_bg": "#1e3a8a",
-        "button_bg": "#06b6d4",
-        "button_hover": "#099E97",
-        "container_bg": "#1e293b",
-        "scrollbar_primary": "#06b6d4",
-        "scrollbar_hover": "#2563eb"
-    },
-    "light": {
-        "bg_gradient": "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
-        "sidebar_bg": "linear-gradient(180deg, #e2e8f0 0%, #f1f5f9 100%)",
-        "accent": "#0891b2",
-        "accent_secondary": "#2563eb",
-        "accent_tertiary": "#7c3aed",
-        "text_primary": "#0f172a",
-        "text_secondary": "#334155",
-        "text_tertiary": "#475569",
-        "success": "#059669",
-        "warning": "#d97706",
-        "error": "#dc2626",
-        "info": "#0891b2",
-        "metric_bg": "#dbeafe",
-        "button_bg": "#0891b2",
-        "button_hover": "#0369a1",
-        "container_bg": "#f1f5f9",
-        "scrollbar_primary": "#0891b2",
-        "scrollbar_hover": "#2563eb"
+        "info": "#6d56f5",
+        # Lavender-tinted card backgrounds
+        "metric_bg": "#ede9fe",
+        "button_bg": "#6d56f5",
+        "button_hover": "#5840e0",
+        "container_bg": "#f3f0ff",
+        "scrollbar_primary": "#6d56f5",
+        "scrollbar_hover": "#ec4899"
     }
 }
 
@@ -133,7 +140,7 @@ css_content = f"""
         padding: 20px;
         border-radius: 12px;
         border-left: 4px solid {theme['accent']};
-        box-shadow: 0px 8px 20px rgba(6, 182, 212, 0.2);
+        box-shadow: 0px 8px 20px rgba(124, 106, 247, 0.2);
     }}
     
     .stMetric label {{
@@ -156,14 +163,14 @@ css_content = f"""
         padding: 12px 28px;
         font-weight: 700;
         font-size: 16px;
-        box-shadow: 0px 8px 20px rgba(6, 182, 212, 0.4);
+        box-shadow: 0px 8px 20px rgba(124, 106, 247, 0.35);
         transition: all 0.3s ease;
         width: 100%;
     }}
     
     .stButton > button:hover {{
         background: linear-gradient(90deg, {theme['button_hover']}, {theme['accent_secondary']});
-        box-shadow: 0px 12px 30px rgba(6, 182, 212, 0.6);
+        box-shadow: 0px 12px 30px rgba(124, 106, 247, 0.5);
         transform: translateY(-2px);
     }}
     
@@ -205,7 +212,7 @@ css_content = f"""
     
     /* Success message */
     .stSuccess {{
-        background: {'linear-gradient(135deg, #064e3b 0%, #047857 100%)' if st.session_state.theme == 'dark' else 'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)'};
+        background: {'linear-gradient(135deg, #0d3b2e 0%, #065f46 100%)' if st.session_state.theme == 'dark' else 'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)'};
         border-left: 4px solid {theme['success']};
         border-radius: 8px;
         padding: 15px;
@@ -214,7 +221,7 @@ css_content = f"""
     
     /* Warning message */
     .stWarning {{
-        background: {'linear-gradient(135deg, #78350f 0%, #b45309 100%)' if st.session_state.theme == 'dark' else 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)'};
+        background: {'linear-gradient(135deg, #3d2a00 0%, #78460a 100%)' if st.session_state.theme == 'dark' else 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)'};
         border-left: 4px solid {theme['warning']};
         border-radius: 8px;
         padding: 15px;
@@ -223,7 +230,7 @@ css_content = f"""
     
     /* Error message */
     .stError {{
-        background: {'linear-gradient(135deg, #7f1d1d 0%, #b91c1c 100%)' if st.session_state.theme == 'dark' else 'linear-gradient(135deg, #fee2e2 0%, #fecaca 100%)'};
+        background: {'linear-gradient(135deg, #3b0d0d 0%, #7f1d1d 100%)' if st.session_state.theme == 'dark' else 'linear-gradient(135deg, #fee2e2 0%, #fecaca 100%)'};
         border-left: 4px solid {theme['error']};
         border-radius: 8px;
         padding: 15px;
@@ -232,7 +239,7 @@ css_content = f"""
     
     /* Info message */
     .stInfo {{
-        background: {'linear-gradient(135deg, #0c4a6e 0%, #0369a1 100%)' if st.session_state.theme == 'dark' else 'linear-gradient(135deg, #cffafe 0%, #a5f3fc 100%)'};
+        background: {'linear-gradient(135deg, #1e1250 0%, #2d1f8a 100%)' if st.session_state.theme == 'dark' else 'linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%)'};
         border-left: 4px solid {theme['info']};
         border-radius: 8px;
         padding: 15px;
@@ -310,7 +317,7 @@ css_content = f"""
         padding: 20px;
         border-radius: 12px;
         border-left: 4px solid {theme['accent']};
-        box-shadow: 0px 8px 20px rgba(6, 182, 212, 0.2);
+        box-shadow: 0px 8px 20px rgba(124, 106, 247, 0.2);
         color: {theme['text_primary']};
     }}
     
@@ -651,7 +658,7 @@ Please format with clear headings and bullet points for easy reading."""
                         padding: 20px;
                         border-radius: 12px;
                         border-left: 4px solid {theme['accent']};
-                        box-shadow: 0px 8px 20px rgba(6, 182, 212, 0.2);
+                        box-shadow: 0px 8px 20px rgba(124, 106, 247, 0.2);
                         color: {theme['text_primary']};
                     }}
                     .analysis-container h3 {{
