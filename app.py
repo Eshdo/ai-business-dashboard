@@ -723,7 +723,7 @@ Please format with clear headings and bullet points for easy reading."""
                         font-weight: 700;
                     }}
                     </style>
-                    <div class="analysis-container">{md_lib.markdown(ai_content, extensions=["extra", "nl2br"])}</div>
+                    {md_lib.markdown(ai_content, extensions=["extra", "nl2br"])}
                     """, unsafe_allow_html=True)
 
                 except Exception as e:
