@@ -18,7 +18,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Theme toggle in session state
+# Theme toggle 
 if "theme" not in st.session_state:
     st.session_state.theme = "dark"
 
@@ -76,10 +76,10 @@ THEMES = {
 
 theme = THEMES[st.session_state.theme]
 
-# AI content text: pure white in dark mode, theme primary in light mode
+# AI content text
 ai_text_color = "#ffffff" if st.session_state.theme == "dark" else theme["text_primary"]
 
-# Custom CSS with dynamic theme
+# Custom CSS
 css_content = f"""
 <style>
     * {{
@@ -377,7 +377,7 @@ css_content = f"""
 st.markdown(css_content, unsafe_allow_html=True)
 
 
-# ── Helper: build .docx bytes from AI markdown text ───────────────────────────
+# build .docx bytes from AI markdown text
 def _add_runs_with_bold(paragraph, text: str):
     """Split on **bold** markers and add styled runs."""
     parts = re.split(r"(\*\*.*?\*\*)", text)
@@ -450,7 +450,7 @@ def generate_docx(markdown_text: str, title: str = "AI Business Insights Report"
     return buf.getvalue()
 
 
-# ── Sidebar ────────────────────────────────────────────────────────────────────
+# Sidebar
 col1, col2 = st.sidebar.columns([0.8, 0.2])
 with col1:
     st.sidebar.title("📊 Dashboard")
@@ -467,11 +467,11 @@ menu = st.sidebar.radio(
     help="Select a section to navigate"
 )
 
-# ── Main title ─────────────────────────────────────────────────────────────────
+# Main title 
 st.title("📊 AI Business Dashboard")
 st.caption("✨ Transform your data into powerful business insights using AI")
 
-# ── Upload section ─────────────────────────────────────────────────────────────
+# Upload section
 if menu == "📤 Upload Data":
     st.subheader("📤 Upload Your Data")
     col1, col2 = st.columns([3, 1])
@@ -496,7 +496,7 @@ if menu == "📤 Upload Data":
 else:
     file = None
 
-# ── Load data ──────────────────────────────────────────────────────────────────
+# Load data
 try:
     df = pd.read_csv("data.csv")
 except FileNotFoundError:
@@ -505,7 +505,7 @@ except Exception as e:
     st.error(f"❌ Error loading data: {e}")
     df = None
 
-# ── Dashboard ──────────────────────────────────────────────────────────────────
+# Dashboard
 if menu == "📈 Dashboard" and df is not None:
     st.sidebar.header("🔍 Filters")
     df_filtered = df.copy()
@@ -598,7 +598,7 @@ if menu == "📈 Dashboard" and df is not None:
         fig.update_layout(**chart_layout(), xaxis_title=cat, yaxis_title=num, hovermode='x unified')
         st.plotly_chart(fig, use_container_width=True)
 
-# ── AI Insights ────────────────────────────────────────────────────────────────
+# AI Insights 
 if menu == "🤖 AI Insights" and df is not None:
     st.subheader("🤖 AI Insights Engine - Powered by Groq ⚡")
     st.info("💡 Lightning-fast AI analysis using Groq's latest Llama models")
@@ -743,7 +743,7 @@ Please format with clear headings and bullet points for easy reading."""
                     st.write("- ✓ Internet connection stable?")
                     st.write("- ✓ Try with smaller dataset?")
 
-        # ── Download report button (appears once report is generated) ──────────
+        # Download report button (appears once report is generated)
         if st.session_state.get("last_ai_report"):
             st.divider()
             st.markdown("### 📥 Download Report")
@@ -756,7 +756,7 @@ Please format with clear headings and bullet points for easy reading."""
                 use_container_width=True
             )
 
-# ── No data state ──────────────────────────────────────────────────────────────
+# No data state
 if df is None:
     st.warning("⚠️ No data loaded. Please upload a dataset to get started.")
     st.info("📝 Navigate to '📤 Upload Data' section to upload your CSV file.")
