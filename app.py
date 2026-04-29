@@ -708,7 +708,7 @@ Please format with clear headings and bullet points for easy reading."""
                         color: {theme['text_primary']} !important;
                     }}
                     .analysis-container li {{
-                        color: {theme['text_primary']} !important;
+                        color: {theme['text_secondary']} !important;
                         margin-bottom: 8px;
                         line-height: 1.5;
                     }}
