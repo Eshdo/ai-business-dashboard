@@ -687,6 +687,11 @@ Please format with clear headings and bullet points for easy reading."""
 
                     st.success("✅ Analysis Complete!")
 
+                    # Strip any raw HTML tags the AI accidentally outputs,
+                    # then convert clean markdown → proper HTML
+                    ai_clean = re.sub(r'<[^>]+>', '', ai_content)
+                    ai_html  = md_lib.markdown(ai_clean, extensions=["extra"])
+
                     # ── Render AI content with forced white text in dark mode ──
                     st.markdown(f"""
                     <style>
@@ -723,7 +728,7 @@ Please format with clear headings and bullet points for easy reading."""
                         font-weight: 700;
                     }}
                     </style>
-                    {md_lib.markdown(ai_content, extensions=["extra", "nl2br"])}
+                    <div class="analysis-container">{ai_html}</div>
                     """, unsafe_allow_html=True)
 
                 except Exception as e:
