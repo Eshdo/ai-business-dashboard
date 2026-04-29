@@ -8,6 +8,7 @@ from docx import Document as DocxDocument
 from docx.shared import Pt, RGBColor, Inches
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 import re
+import markdown as md_lib
 
 # Page config with modern dark theme
 st.set_page_config(
@@ -184,6 +185,25 @@ css_content = f"""
         background: linear-gradient(90deg, {theme['button_hover']}, {theme['accent_secondary']});
         box-shadow: 0px 12px 30px rgba(124, 106, 247, 0.5);
         transform: translateY(-2px);
+    }}
+    
+    /* Download button — accent gradient, not white */
+    [data-testid="stDownloadButton"] > button {{
+        background: linear-gradient(90deg, {theme['accent_tertiary']}, {theme['accent']}) !important;
+        color: #ffffff !important;
+        border: none !important;
+        border-radius: 10px !important;
+        padding: 12px 28px !important;
+        font-weight: 700 !important;
+        font-size: 16px !important;
+        box-shadow: 0px 8px 20px rgba(52, 211, 153, 0.35) !important;
+        transition: all 0.3s ease !important;
+        width: 100% !important;
+    }}
+    [data-testid="stDownloadButton"] > button:hover {{
+        background: linear-gradient(90deg, {theme['accent']}, {theme['accent_secondary']}) !important;
+        box-shadow: 0px 12px 30px rgba(52, 211, 153, 0.5) !important;
+        transform: translateY(-2px) !important;
     }}
     
     /* Selectbox and input fields */
@@ -703,7 +723,7 @@ Please format with clear headings and bullet points for easy reading."""
                         font-weight: 700;
                     }}
                     </style>
-                    <div class="analysis-container">{ai_content}</div>
+                    <div class="analysis-container">{md_lib.markdown(ai_content, extensions=["extra", "nl2br"])}</div>
                     """, unsafe_allow_html=True)
 
                 except Exception as e:
