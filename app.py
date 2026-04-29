@@ -693,6 +693,7 @@ Please format with clear headings and bullet points for easy reading."""
                     ai_html  = md_lib.markdown(ai_clean, extensions=["extra"])
 
                     # ── Render AI content with forced white text in dark mode ──
+                    # Split into two calls: style first, then content
                     st.markdown(f"""
                     <style>
                     .analysis-container {{
@@ -728,8 +729,11 @@ Please format with clear headings and bullet points for easy reading."""
                         font-weight: 700;
                     }}
                     </style>
-                    <div class="analysis-container">{ai_html}</div>
                     """, unsafe_allow_html=True)
+                    st.markdown(
+                        f'<div class="analysis-container">{ai_html}</div>',
+                        unsafe_allow_html=True
+                    )
 
                 except Exception as e:
                     st.error(f"❌ Error: {str(e)}")
