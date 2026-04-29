@@ -123,23 +123,8 @@ Steps:
 
 ---
 
-## 📊 Sample Dataset
-
-You can use any CSV file with columns like:
-
-* Date
-* Region
-* Product
-* Sales
-* Profit
-* Quantity
-
----
-
 ## 🎯 Future Improvements
 
-* 📥 Download reports (PDF/Excel)
-* 🌙 Dark mode toggle
 * 🔐 User authentication
 * 📡 Real-time data integration
 * 📊 Advanced analytics (forecasting)
