@@ -25,7 +25,7 @@ The **AI Business Dashboard** is a modern SaaS-style data analytics tool that al
 
 ### 📂 Data Upload
 
-* Upload CSV files بسهولة
+* Upload CSV files
 * Automatic data preview
 
 ### 🔍 Smart Filters
