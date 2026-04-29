@@ -368,7 +368,8 @@ css_content = f"""
     }}
     
     .analysis-container li {{
-        color: {theme['text_secondary']} !important;
+        color: #ffffff !important;
+        line-height: 1.6;
     }}
 </style>
 """
